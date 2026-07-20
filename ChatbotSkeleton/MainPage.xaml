@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ChatbotSkeleton"
+             xmlns:models="clr-namespace:ChatbotSkeleton.Models"
+             xmlns:selectors="clr-namespace:ChatbotSkeleton.Selectors"
+             x:Class="ChatbotSkeleton.MainPage">
+
+    <ContentPage.Resources>
+        <!-- User Message Template (Right-aligned, Primary color) -->
+        <DataTemplate x:Key="UserMessageTemplate">
+            <Grid Padding="10,5">
+                <Frame BackgroundColor="{StaticResource Primary}"
+                       CornerRadius="15"
+                       Padding="12,8"
+                       HasShadow="False"
+                       HorizontalOptions="End"
+                       MaximumWidthRequest="300">
+                    <Label Text="{Binding Text}"
+                           TextColor="White"
+                           FontSize="14"
+                           LineBreakMode="WordWrap" />
+                </Frame>
+            </Grid>
+        </DataTemplate>
+
+        <!-- Bot Message Template (Left-aligned, Gray600 color) -->
+        <DataTemplate x:Key="BotMessageTemplate">
+            <Grid Padding="10,5">
+                <Frame BackgroundColor="{StaticResource Gray600}"
+                       CornerRadius="15"
+                       Padding="12,8"
+                       HasShadow="False"
+                       HorizontalOptions="Start"
+                       MaximumWidthRequest="300">
+                    <Label Text="{Binding Text}"
+                           TextColor="White"
+                           FontSize="14"
+                           LineBreakMode="WordWrap" />
+                </Frame>
+            </Grid>
+        </DataTemplate>
+
+        <!-- Template Selector -->
+        <selectors:ChatMessageTemplateSelector x:Key="MessageTemplateSelector"
+                                               UserTemplate="{StaticResource UserMessageTemplate}"
+                                               BotTemplate="{StaticResource BotMessageTemplate}" />
+    </ContentPage.Resources>
+
+    <Grid ColumnSpacing="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="SidebarColumn" Width="240" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Grid Grid.Column="0" BackgroundColor="{StaticResource Gray950}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Toggle Button -->
+            <Button Grid.Row="0"
+                    x:Name="ToggleButton"
+                    Text="☰"
+                    FontSize="24"
+                    BackgroundColor="Transparent"
+                    TextColor="White"
+                    Clicked="OnToggleSidebar"
+                    Margin="10" />
+
+            <!-- New Chat Button -->
+            <Border Grid.Row="1"
+                    Margin="10,5"
+                    BackgroundColor="{StaticResource Gray600}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <Grid>
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnNewChat" />
+                    </Grid.GestureRecognizers>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0"
+                           Text="+"
+                           FontSize="24"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Margin="10,8" />
+                    <Label Grid.Column="1"
+                           x:Name="NewChatLabel"
+                           Text="New Chat"
+                           FontSize="14"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           Margin="0,8,10,8" />
+                </Grid>
+            </Border>
+
+            <!-- History List -->
+            <CollectionView Grid.Row="2"
+                            x:Name="HistoryList"
+                            ItemsSource="{Binding ChatHistory}"
+                            SelectionMode="Single"
+                            SelectionChanged="OnHistorySelected"
+                            Margin="0,10,0,0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="10,2"
+                                BackgroundColor="Transparent"
+                                StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="6" />
+                            </Border.StrokeShape>
+                            <Grid Padding="10,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0"
+                                       Text="💬"
+                                       FontSize="18"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       x:Name="HistoryItemLabel"
+                                       Text="{Binding .}"
+                                       TextColor="White"
+                                       FontSize="13"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <!-- Main Chat Area -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Chat Messages -->
+            <CollectionView Grid.Row="0"
+                            x:Name="ChatCollectionView"
+                            ItemsSource="{Binding Messages}"
+                            ItemTemplate="{StaticResource MessageTemplateSelector}"
+                            BackgroundColor="{StaticResource Gray900}"
+                            SelectionMode="None" />
+
+            <!-- Input Bar -->
+            <Border Grid.Row="1"
+                    BackgroundColor="{StaticResource Gray950}"
+                    Padding="10"
+                    StrokeThickness="1"
+                    Stroke="{StaticResource Gray600}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0" />
+                </Border.StrokeShape>
+                <Grid ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            BackgroundColor="{StaticResource Gray600}"
+                            StrokeThickness="0"
+                            Padding="10,5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="20" />
+                        </Border.StrokeShape>
+                        <Editor x:Name="MessageEditor"
+                                Placeholder="Type a message…"
+                                PlaceholderColor="{StaticResource Gray300}"
+                                TextColor="White"
+                                BackgroundColor="Transparent"
+                                AutoSize="TextChanges"
+                                MaximumHeightRequest="120"
+                                VerticalOptions="Center" />
+                    </Border>
+
+                    <Button Grid.Column="1"
+                            Text="Send"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            CornerRadius="20"
+                            Padding="20,10"
+                            Clicked="OnSendClicked" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+
+</ContentPage>
