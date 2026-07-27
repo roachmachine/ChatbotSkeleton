@@ -1,43 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:ChatbotSkeleton"
-             xmlns:models="clr-namespace:ChatbotSkeleton.Models"
              xmlns:selectors="clr-namespace:ChatbotSkeleton.Selectors"
-             x:Class="ChatbotSkeleton.MainPage">
+             x:Class="ChatbotSkeleton.MainPage"
+             BackgroundColor="{StaticResource Gray900}">
 
     <ContentPage.Resources>
         <!-- User Message Template (Right-aligned, Primary color) -->
         <DataTemplate x:Key="UserMessageTemplate">
-            <Grid Padding="10,5">
-                <Frame BackgroundColor="{StaticResource Primary}"
-                       CornerRadius="15"
-                       Padding="12,8"
-                       HasShadow="False"
-                       HorizontalOptions="End"
-                       MaximumWidthRequest="300">
+            <Grid Padding="8,4">
+                <Border BackgroundColor="{StaticResource Primary}"
+                        StrokeThickness="0"
+                        Padding="12,8"
+                        HorizontalOptions="End"
+                        MaximumWidthRequest="320">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
                     <Label Text="{Binding Text}"
                            TextColor="White"
                            FontSize="14"
-                           LineBreakMode="WordWrap" />
-                </Frame>
+                           LineBreakMode="WordWrap"
+                           SemanticProperties.Description="User message" />
+                </Border>
             </Grid>
         </DataTemplate>
 
         <!-- Bot Message Template (Left-aligned, Gray600 color) -->
         <DataTemplate x:Key="BotMessageTemplate">
-            <Grid Padding="10,5">
-                <Frame BackgroundColor="{StaticResource Gray600}"
-                       CornerRadius="15"
-                       Padding="12,8"
-                       HasShadow="False"
-                       HorizontalOptions="Start"
-                       MaximumWidthRequest="300">
+            <Grid Padding="8,4">
+                <Border BackgroundColor="{StaticResource Gray600}"
+                        StrokeThickness="0"
+                        Padding="12,8"
+                        HorizontalOptions="Start"
+                        MaximumWidthRequest="320">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
                     <Label Text="{Binding Text}"
                            TextColor="White"
                            FontSize="14"
-                           LineBreakMode="WordWrap" />
-                </Frame>
+                           LineBreakMode="WordWrap"
+                           SemanticProperties.Description="Assistant message" />
+                </Border>
             </Grid>
         </DataTemplate>
 
@@ -56,53 +61,40 @@
         <!-- Sidebar -->
         <Grid Grid.Column="0" BackgroundColor="{StaticResource Gray950}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="60" />
-                <RowDefinition Height="60" />
+                <RowDefinition Height="64" />
+                <RowDefinition Height="64" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <!-- Toggle Button -->
             <Button Grid.Row="0"
                     x:Name="ToggleButton"
-                    Text="☰"
+                    Text="❮"
                     FontSize="24"
                     BackgroundColor="Transparent"
                     TextColor="White"
                     Clicked="OnToggleSidebar"
-                    Margin="10" />
+                    Margin="8"
+                    CornerRadius="12"
+                    HeightRequest="48"
+                    WidthRequest="48"
+                    SemanticProperties.Description="Toggle sidebar" />
 
             <!-- New Chat Button -->
-            <Border Grid.Row="1"
-                    Margin="10,5"
+            <Button Grid.Row="1"
+                    x:Name="NewChatButton"
+                    Text="+  New Chat"
+                    FontSize="14"
+                    FontAttributes="Bold"
                     BackgroundColor="{StaticResource Gray600}"
-                    StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="8" />
-                </Border.StrokeShape>
-                <Grid>
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnNewChat" />
-                    </Grid.GestureRecognizers>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0"
-                           Text="+"
-                           FontSize="24"
-                           TextColor="White"
-                           VerticalOptions="Center"
-                           HorizontalOptions="Center"
-                           Margin="10,8" />
-                    <Label Grid.Column="1"
-                           x:Name="NewChatLabel"
-                           Text="New Chat"
-                           FontSize="14"
-                           TextColor="White"
-                           VerticalOptions="Center"
-                           Margin="0,8,10,8" />
-                </Grid>
-            </Border>
+                    TextColor="White"
+                    Clicked="OnNewChat"
+                    Margin="8,4"
+                    HeightRequest="48"
+                    HorizontalOptions="Fill"
+                    CornerRadius="12"
+                    ToolTipProperties.Text="New chat"
+                    SemanticProperties.Description="Start a new chat" />
 
             <!-- History List -->
             <CollectionView Grid.Row="2"
@@ -110,16 +102,17 @@
                             ItemsSource="{Binding ChatHistory}"
                             SelectionMode="Single"
                             SelectionChanged="OnHistorySelected"
-                            Margin="0,10,0,0">
+                            Margin="0,8,0,0"
+                            SemanticProperties.Description="Chat history">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="10,2"
+                        <Border Margin="8,4"
                                 BackgroundColor="Transparent"
                                 StrokeThickness="0">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="6" />
                             </Border.StrokeShape>
-                            <Grid Padding="10,8">
+                            <Grid Padding="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
@@ -132,10 +125,11 @@
                                        x:Name="HistoryItemLabel"
                                        Text="{Binding .}"
                                        TextColor="White"
-                                       FontSize="13"
+                                       FontSize="14"
                                        LineBreakMode="TailTruncation"
                                        MaxLines="1"
-                                       VerticalOptions="Center" />
+                                       VerticalOptions="Center"
+                                       SemanticProperties.Description="Chat history item" />
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -156,17 +150,16 @@
                             ItemsSource="{Binding Messages}"
                             ItemTemplate="{StaticResource MessageTemplateSelector}"
                             BackgroundColor="{StaticResource Gray900}"
+                            Margin="35"
                             SelectionMode="None" />
 
             <!-- Input Bar -->
             <Border Grid.Row="1"
-                    BackgroundColor="{StaticResource Gray950}"
+                    BackgroundColor="{StaticResource Gray900}"
                     Padding="10"
-                    StrokeThickness="1"
-                    Stroke="{StaticResource Gray600}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="0" />
-                </Border.StrokeShape>
+                    Margin="35"
+                    StrokeThickness="0"
+                    VerticalOptions="End">
                 <Grid ColumnSpacing="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -175,8 +168,7 @@
 
                     <Border Grid.Column="0"
                             BackgroundColor="{StaticResource Gray600}"
-                            StrokeThickness="0"
-                            Padding="10,5">
+                            StrokeThickness="0">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="20" />
                         </Border.StrokeShape>
@@ -184,6 +176,7 @@
                                 Placeholder="Type a message…"
                                 PlaceholderColor="{StaticResource Gray300}"
                                 TextColor="White"
+                                Margin="10,10,10,20"
                                 BackgroundColor="Transparent"
                                 AutoSize="TextChanges"
                                 MaximumHeightRequest="120"
@@ -191,12 +184,17 @@
                     </Border>
 
                     <Button Grid.Column="1"
-                            Text="Send"
-                            BackgroundColor="{StaticResource Primary}"
+                            Text="⮝"
+                            FontSize="22"
+                            FontAttributes="Bold"
+                            BackgroundColor="{StaticResource Gray600}"
                             TextColor="White"
-                            CornerRadius="20"
-                            Padding="20,10"
-                            Clicked="OnSendClicked" />
+                            CornerRadius="28"
+                            WidthRequest="60"
+                            HeightRequest="60"
+                            Padding="0"
+                            Clicked="OnSendClicked"
+                            SemanticProperties.Description="Send message" />
                 </Grid>
             </Border>
         </Grid>

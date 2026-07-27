@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using ChatbotSkeleton.Models;
 
 namespace ChatbotSkeleton
@@ -22,6 +23,9 @@ namespace ChatbotSkeleton
 
             // Hook up Enter key handling for Windows
             MessageEditor.HandlerChanged += OnMessageEditorHandlerChanged;
+            SizeChanged += OnPageSizeChanged;
+
+            ApplySidebarState();
         }
 
         private void OnMessageEditorHandlerChanged(object? sender, EventArgs e)
@@ -50,28 +54,36 @@ namespace ChatbotSkeleton
         private void OnToggleSidebar(object? sender, EventArgs e)
         {
             _sidebarExpanded = !_sidebarExpanded;
+            ApplySidebarState();
+        }
 
+        private void ApplySidebarState()
+        {
             if (_sidebarExpanded)
             {
                 SidebarColumn.Width = new GridLength(240);
-                ToggleButton.Text = "☰";
-                NewChatLabel.IsVisible = true;
-
-                // Show history labels
-                foreach (var child in HistoryList.ItemsSource as IEnumerable<string> ?? Enumerable.Empty<string>())
-                {
-                    // Labels visibility is handled in XAML binding - we just need to ensure the template reflects it
-                }
+                ToggleButton.Text = "❮";
+                NewChatButton.Text = "+  New Chat";
+                NewChatButton.FontSize = 14;
+                NewChatButton.IsVisible = true;
+                HistoryList.IsVisible = true;
             }
             else
             {
-                SidebarColumn.Width = new GridLength(60);
-                ToggleButton.Text = "→";
-                NewChatLabel.IsVisible = false;
-
-                // Hide history labels (icons only)
-                // Labels visibility is handled in binding context
+                SidebarColumn.Width = new GridLength(80);
+                ToggleButton.Text = "❯";
+                NewChatButton.Text = "💬";
+                NewChatButton.FontSize = 20;
+                NewChatButton.IsVisible = true;
+                HistoryList.IsVisible = false;
             }
+        }
+
+        private void OnPageSizeChanged(object? sender, EventArgs e)
+        {
+            var sidebarWidth = SidebarColumn.Width.IsAbsolute ? SidebarColumn.Width.Value : -1;
+            var mainWidth = Width - sidebarWidth;
+            Debug.WriteLine($"[MainPage] Width={Width:F1}, Height={Height:F1}, Sidebar={sidebarWidth:F1}, Main={mainWidth:F1}");
         }
 
         private void OnNewChat(object? sender, EventArgs e)
